@@ -66,7 +66,6 @@ export default {
         this.getHomeGoods('new');
         this.getHomeGoods('sell');
 
-        // console.log('d')
     },
     computed: {
         showGoods() {
