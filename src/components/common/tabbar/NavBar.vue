@@ -5,7 +5,7 @@
 
         </slot>
     </div>
-    <div class="content">
+    <div class="nav-content">
         <slot name="content"> </slot>
     </div>
 
@@ -21,20 +21,27 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .nav-container {
     display: flex;
     box-shadow: 0 1px 1px rgba(100, 100, 100, .1);
     height: 44px;
     text-align: center;
     line-height: 44px;
+    color: black;
 }
 
-.left .right {
+.nav-container .left {
     width: 60px;
 }
 
-.content {
-    flex: 1
+.nav-container .right {
+    width: 60px;
+}
+
+.nav-container .nav-content {
+    flex: 1;
+    color: black;
+
 }
 </style>

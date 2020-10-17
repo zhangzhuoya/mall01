@@ -1,15 +1,19 @@
 <template>
 <div class="home">
-    <nav-bar class="home-nav">
-        <div slot="content">购物街</div>
-    </nav-bar>
-    <div class="content">
+    <div class="home-nav">
+        <nav-bar>
+            <div slot="content">购物街</div>
+        </nav-bar>
+    </div>
+    <scroll class="content" ref="scroll" :probe-type="3" @scroll="contentScroll" :pull-up-load="true" @pullingUp="pullingUp">
         <home-swiper :banners="banners"></home-swiper>
         <recommend-item :recommends="recommends"></recommend-item>
         <feature-view></feature-view>
         <tab-control :titles="titles" @tabClick="tabClick"></tab-control>
         <goods-list :goods="showGoods"></goods-list>
-    </div>
+    </scroll>
+    <back-top @click.native="backClick" v-show="isShowBackTop">
+    </back-top>
 </div>
 </template>
 
@@ -17,6 +21,8 @@
 import NavBar from "components/common/tabbar/NavBar.vue";
 import TabControl from "components/content/tabControl/TabControl.vue";
 import GoodsList from "components/content/goods/GoodsList.vue";
+import BackTop from "components/content/backTop/BackTop.vue";
+import Scroll from "components/common/scroll/Scroll.vue"
 
 import HomeSwiper from "./childComps/HomeSwiper.vue";
 import RecommendItem from "./childComps/RecommendView.vue";
@@ -35,7 +41,9 @@ export default {
         RecommendItem,
         FeatureView,
         TabControl,
-        GoodsList
+        GoodsList,
+        Scroll,
+        BackTop
     },
     data() {
         return {
@@ -56,8 +64,8 @@ export default {
                     list: []
                 }
             },
-            currentType: 'pop'
-
+            currentType: 'pop',
+            isShowBackTop: false
         };
     },
     created() {
@@ -73,9 +81,22 @@ export default {
         }
     },
     methods: {
+        contentScroll(position) {
+            console.log(position)
+            this.isShowBackTop = (-position.y) > 1000
+            console.log(this.isShowBackTop)
+
+        },
+        pullingUp() {
+            console.log("上拉事件")
+            this.getHomeGoods(this.currentType)
+        },
+        backClick() {
+            this.$refs.scroll.scrollTo(0, 0)
+
+        },
         /**
            获取网络请求
-
          */
         tabClick(index) {
             switch (index) {
@@ -107,33 +128,37 @@ export default {
             });
         },
         getHomeGoods(type) {
-            const page = 1;
+            const page = this.goods[type].page + 1;
             getHomeGoods(type, page).then((res) => {
-                console.log(type)
-                this.goods[type].list = res.data.list
+                // console.log(type)
+                this.goods[type].list.push(...res.data.list)
                 // console.log(this.goods[type].list);
+                this.goods[type].page + 1
+                // console.log(this.goods[type].page)
+                // console.log(this.goods[type].list)
+                this.$refs.scroll.finishPullUp()
             });
         },
     },
 };
 </script>
 
-<style>
+<style scoped>
 .home-nav {
     background-color: #ff8198;
     color: #fff;
-
     position: fixed;
     left: 0;
     right: 0;
     top: 0;
     z-index: 9;
+
 }
 
 .content {
-    color: #fff;
+    overflow: hidden;
     position: absolute;
-    top: 44px;
+    top: 22px;
     bottom: 49px;
     left: 0;
     right: 0;
