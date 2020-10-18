@@ -68,17 +68,18 @@ export default {
             isShowBackTop: false
         };
     },
+    mounted() {
+        const a = this.debounce(this.$refs.scroll.refresh, 100)
+        this.$bus.$on('itemImgOnload', () => {
+            a()
+        })
+
+    },
     created() {
         this.getHomeMultidata();
         this.getHomeGoods('pop');
         this.getHomeGoods('new');
         this.getHomeGoods('sell');
-
-        this.$bus.$on('itemImgOnload', () => {
-            // console.log('a')
-            this.$refs.scroll.refresh()
-        })
-
     },
     computed: {
         showGoods() {
@@ -86,14 +87,24 @@ export default {
         }
     },
     methods: {
+        debounce(func, delay) {
+            let timer = null;
+            return function () {
+                timer && clearInterval(timer);
+                timer = setTimeout(() => {
+                    func.apply(null, arguments)
+                }, delay)
+            }
+        },
+
         contentScroll(position) {
-            console.log(position)
+            // console.log(position)
             this.isShowBackTop = (-position.y) > 1000
-            console.log(this.isShowBackTop)
+            // console.log(this.isShowBackTop)
 
         },
         pullingUp() {
-            console.log("上拉事件")
+            // console.log("上拉事件")
             this.getHomeGoods(this.currentType)
         },
         backClick() {
