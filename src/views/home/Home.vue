@@ -7,7 +7,7 @@
     </div>
     <tab-control :titles="titles" @tabClick="tabClick" class="tab-item" ref="tab1" v-if="isTabShow"></tab-control>
     <scroll class="content" ref="scroll" :probe-type="3" @scroll="contentScroll" :pull-up-load="true" @pullingUp="pullingUp">
-        <home-swiper :banners="banners" @swiperOnLoad="swiperOnLoad"></home-swiper>
+        <home-swiper :banners="banners" @swiperOnLoad="swiperOnLoad" :isLoad="isLoad"></home-swiper>
         <recommend-item :recommends="recommends"></recommend-item>
         <feature-view></feature-view>
         <tab-control :titles="titles" @tabClick="tabClick" ref="tab2"></tab-control>
@@ -28,13 +28,10 @@ import Scroll from "components/common/scroll/Scroll.vue"
 import HomeSwiper from "./childComps/HomeSwiper.vue";
 import RecommendItem from "./childComps/RecommendView.vue";
 import FeatureView from "./childComps/FeatureView.vue";
-
 import {
     getHomeMultidata,
     getHomeGoods,
-
 } from "network/home";
-
 export default {
     components: {
         NavBar,
@@ -67,7 +64,9 @@ export default {
             },
             currentType: 'pop',
             isShowBackTop: false,
-            isTabShow: false
+            isTabShow: false,
+            isLoad: false,
+            saveY: 0
         };
     },
     mounted() {
@@ -77,17 +76,29 @@ export default {
             a()
         })
         // this.swiperOnLoad()
+
     },
     created() {
         this.getHomeMultidata();
         this.getHomeGoods('pop');
         this.getHomeGoods('new');
         this.getHomeGoods('sell');
+        // this.$refs.scroll.refresh()
+
     },
     computed: {
         showGoods() {
             return this.goods[this.currentType].list
-        }
+        },
+
+    },
+    activated() {
+        this.$refs.scroll.scrollTo(0, this.saveY, 0);
+        // 进行刷新
+        this.$refs.scroll.refresh()
+    },
+    deactivated() {
+        this.saveY = this.$refs.scroll.scroll.y
     },
     methods: {
         debounce(func, delay) {
@@ -104,11 +115,11 @@ export default {
             // console.log(position)
             this.isShowBackTop = (-position.y) > 1000
             // console.log(this.isShowBackTop)
-            this.isTabShow = (-position.y) > this.$refs.tab2.$el.offsetTop
+            this.isTabShow = (-position.y) > this.swiperOnLoad()
 
         },
         swiperOnLoad() {
-            console.log(this.$refs.tab2.$el.offsetTop)
+            return this.$refs.tab2.$el.offsetTop
         },
         pullingUp() {
             // console.log("上拉事件")

@@ -13,7 +13,6 @@ import {
     Swiper,
     SwiperItem
 } from 'components/common/swiper'
-
 export default {
     name: "HomeSwiper",
     props: {
@@ -34,7 +33,6 @@ export default {
             this.$emit('swiperOnLoad');
         }
     }
-
 }
 </script>
 
