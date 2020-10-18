@@ -74,6 +74,11 @@ export default {
         this.getHomeGoods('new');
         this.getHomeGoods('sell');
 
+        this.$bus.$on('itemImgOnload', () => {
+            // console.log('a')
+            this.$refs.scroll.refresh()
+        })
+
     },
     computed: {
         showGoods() {

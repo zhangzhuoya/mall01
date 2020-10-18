@@ -43,10 +43,10 @@ export default {
 
         // 3.监听上拉事件
         this.scroll.on('pullingUp', () => {
-            console.log('sss')
+            // console.log('sss')
             this.$emit('pullingUp')
         })
-        console.log(this.scroll.wrapper)
+        // console.log(this.scroll.wrapper)
     },
     methods: {
         scrollTo(x, y, time = 300) {
@@ -54,6 +54,10 @@ export default {
         },
         finishPullUp() {
             this.scroll.finishPullUp()
+        },
+        refresh() {
+            console.log('sss')
+            this.scroll.refresh()
         }
     }
 }
