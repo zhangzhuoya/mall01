@@ -5,11 +5,12 @@
             <div slot="content">购物街</div>
         </nav-bar>
     </div>
+    <tab-control :titles="titles" @tabClick="tabClick" class="tab-item" ref="tab1" v-if="isTabShow"></tab-control>
     <scroll class="content" ref="scroll" :probe-type="3" @scroll="contentScroll" :pull-up-load="true" @pullingUp="pullingUp">
-        <home-swiper :banners="banners"></home-swiper>
+        <home-swiper :banners="banners" @swiperOnLoad="swiperOnLoad"></home-swiper>
         <recommend-item :recommends="recommends"></recommend-item>
         <feature-view></feature-view>
-        <tab-control :titles="titles" @tabClick="tabClick"></tab-control>
+        <tab-control :titles="titles" @tabClick="tabClick" ref="tab2"></tab-control>
         <goods-list :goods="showGoods"></goods-list>
     </scroll>
     <back-top @click.native="backClick" v-show="isShowBackTop">
@@ -65,15 +66,17 @@ export default {
                 }
             },
             currentType: 'pop',
-            isShowBackTop: false
+            isShowBackTop: false,
+            isTabShow: false
         };
     },
     mounted() {
+        // console.log(this.$ref.$el.)
         const a = this.debounce(this.$refs.scroll.refresh, 100)
         this.$bus.$on('itemImgOnload', () => {
             a()
         })
-
+        // this.swiperOnLoad()
     },
     created() {
         this.getHomeMultidata();
@@ -101,7 +104,11 @@ export default {
             // console.log(position)
             this.isShowBackTop = (-position.y) > 1000
             // console.log(this.isShowBackTop)
+            this.isTabShow = (-position.y) > this.$refs.tab2.$el.offsetTop
 
+        },
+        swiperOnLoad() {
+            console.log(this.$refs.tab2.$el.offsetTop)
         },
         pullingUp() {
             // console.log("上拉事件")
@@ -109,7 +116,6 @@ export default {
         },
         backClick() {
             this.$refs.scroll.scrollTo(0, 0)
-
         },
         /**
            获取网络请求
@@ -126,6 +132,8 @@ export default {
                     this.currentType = 'sell'
                     break
             }
+            this.$refs.tab1.curIndex = index;
+            this.$refs.tab2.curIndex = index;
 
         },
 
@@ -137,6 +145,7 @@ export default {
                 // console.log(res.data.recommend)
 
                 this.banners = res.data.banner.list;
+                console.log(this.banners)
                 this.recommends = res.data.recommend.list;
                 // res.data.banner.list
                 // this.banners = res.data.banner.list
@@ -171,10 +180,18 @@ export default {
 
 }
 
+.tab-item {
+    position: relative;
+    top: 43px;
+    background: white;
+    z-index: 10;
+
+}
+
 .content {
     overflow: hidden;
     position: absolute;
-    top: 22px;
+    top: 43px;
     bottom: 49px;
     left: 0;
     right: 0;
