@@ -116,7 +116,6 @@ export default {
             this.isShowBackTop = (-position.y) > 1000
             // console.log(this.isShowBackTop)
             this.isTabShow = (-position.y) > this.swiperOnLoad()
-
         },
         swiperOnLoad() {
             return this.$refs.tab2.$el.offsetTop
@@ -149,14 +148,14 @@ export default {
         },
 
         getHomeMultidata() {
-            console.log("a");
+            // console.log("a");
             getHomeMultidata().then((res) => {
                 // console.log(res.data)
                 // console.log(typeof res.data.recommend)
                 // console.log(res.data.recommend)
 
                 this.banners = res.data.banner.list;
-                console.log(this.banners)
+                // console.log(this.banners)
                 this.recommends = res.data.recommend.list;
                 // res.data.banner.list
                 // this.banners = res.data.banner.list
@@ -166,12 +165,9 @@ export default {
         getHomeGoods(type) {
             const page = this.goods[type].page + 1;
             getHomeGoods(type, page).then((res) => {
-                // console.log(type)
+                console.log(res)
                 this.goods[type].list.push(...res.data.list)
-                // console.log(this.goods[type].list);
                 this.goods[type].page + 1
-                // console.log(this.goods[type].page)
-                // console.log(this.goods[type].list)
                 this.$refs.scroll.finishPullUp()
             });
         },
