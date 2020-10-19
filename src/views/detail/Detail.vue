@@ -13,6 +13,7 @@ import {
     getDetail
 } from "network/detail"
 export default {
+    name: "Detail",
     data() {
         return {
             iid: null,
@@ -27,12 +28,17 @@ export default {
     },
     created() {
         this.iid = this.$route.params.iid;
+        console.log(this.iid)
         getDetail(this.iid).then(res => {
             console.log(res.result)
             this.detailBanner = res.result.itemInfo.topImages
         })
 
     },
+    // computed() {
+    //     this.iid = this.$route.params.iid;
+
+    // },
     methods: {
         detailClick(index) {
             console.log('aa')
