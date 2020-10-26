@@ -1,7 +1,7 @@
 <template>
 <div>
-    <detail-nav @detailClick="detailClick"></detail-nav>
-    <scroll class="content" :probe-type="3" ref="scroll">
+    <detail-nav @detailClick="detailClick" ref="nav"></detail-nav>
+    <scroll class="content" :probe-type="3" ref="scroll" @scroll="contentScroll">
         <detail-swiper :banners="detailBanner" :pull-up-load="true"></detail-swiper>
         <detail-base-info :goods="goods"></detail-base-info>
         <detail-shop :shop="shop"></detail-shop>
@@ -22,7 +22,7 @@ import DetailBaseInfo from "./child/DetailBaseInfo";
 import DetailShop from "./child/DetailShop";
 import DetailGoodsInfo from "./child/DetailGoodsInfo";
 import DetailParamInfo from "./child/DetailParamInfo";
-import DetailRecommendInfo from "./child/DetailRecommendInfo"
+import DetailRecommendInfo from "./child/DetailRecommendInfo";
 
 import Scroll from "components/common/scroll/Scroll";
 
@@ -37,7 +37,7 @@ import {
 
 import {
     itemListenerMixin
-} from "common/mixin.js"
+} from "common/mixin.js";
 export default {
     name: "Detail",
     mixins: [itemListenerMixin],
@@ -52,9 +52,11 @@ export default {
             detailInfo: {},
             commentInfo: {},
             recommendList: [],
-            imageType: 'image',
+            imageType: "image",
             itemImgListener: null,
-            themeTopYs: [1000, 2000, 3000, 4000]
+            themeTopYs: [1000, 2000, 3000, 4000],
+            currentY: 0,
+
         };
     },
     components: {
@@ -66,7 +68,7 @@ export default {
         DetailParamInfo,
         DetailCommentInfo,
         Scroll,
-        DetailRecommendInfo
+        DetailRecommendInfo,
     },
     created() {
         this.iid = this.$route.params.iid;
@@ -97,9 +99,7 @@ export default {
                     this.commentInfo = data.rate.list[0];
                 }
             }),
-
-            this._getRecommend()
-
+            this._getRecommend();
     },
 
     // computed() {
@@ -107,17 +107,15 @@ export default {
 
     // },
     mounted() {
-        console.log(Scroll)
-
-        this.$refs.scroll.scrollTo(0, -1000, 200)
-        console.log(this.$refs.scroll.scrollTo(0, -1000, 200))
-
+        console.log(Scroll);
+        this.$refs.scroll.scrollTo(0, -1000, 200);
+        console.log(this.$refs.scroll.scrollTo(0, -1000, 200));
     },
     updated() {
         // 1. 第一次获取，值不对：this.$ref.params.$el压根没有渲染
         // 2. 第二次不对，图片没有加载完成
         //不包含图片，回产生bug
-        this.detailImageLoad()
+        this.detailImageLoad();
     },
     methods: {
         // detailClick(index) {
@@ -127,28 +125,47 @@ export default {
         // 获取网络请求
         _getRecommend() {
             getRecommend().then((res, error) => {
-                if (error) return
-                this.recommendList = res.data.list
+                if (error) return;
+                this.recommendList = res.data.list;
                 // console.log(this.recommendList)
-            })
+            });
         },
 
         detailImageLoad() {
             this.$nextTick(() => {
+                // this.$ref.scroll.refresh()
                 this.themeTopYs = [];
                 this.themeTopYs.push(0);
                 this.themeTopYs.push(this.$refs.params.$el.offsetTop);
                 this.themeTopYs.push(this.$refs.comment.$el.offsetTop);
                 this.themeTopYs.push(this.$refs.recommend.$el.offsetTop);
-                console.log(this.themeTopYs)
-            })
-
+                // console.log(this.themeTopYs);
+            });
         },
+        contentScroll(positionY) {
+            // console.log(positionY.y)
+            let lengthY = this.themeTopYs.length;
+            // console.log(this.themeTopYs)
+            for (let i = 0; i < lengthY; i++) {
+                // console.log(i)
+                if (this.currentY !== i &&
+                    ((i < lengthY - 1 && -positionY.y >= this.themeTopYs[i] && -positionY.y <= this.themeTopYs[i + 1]) ||
+                        (i === lengthY - 1 && -positionY.y >= this.themeTopYs[i]))) {
+                    this.currentY = i;
+
+                    this.$refs.nav.detailIndex = this.currentY
+                    console.log(this.currentY)
+                    console.log(this.$refs.nav.detailIndex)
+                }
+
+            }
+            // console.log(positionY)
+        },
+
         // 点击跳转到相应位置
         detailClick(index) {
-            this.$refs.scroll.scrollTo(0, -this.themeTopYs[index], 200)
+            this.$refs.scroll.scrollTo(0, -this.themeTopYs[index], 200);
         },
-
     },
 };
 </script>
