@@ -11,10 +11,9 @@
         <recommend-item :recommends="recommends"></recommend-item>
         <feature-view></feature-view>
         <tab-control :titles="titles" @tabClick="tabClick" ref="tab2"></tab-control>
-        <goods-list :goods="showGoods"></goods-list>
+        <goods-list :goods="showGoods" :imageType="imageType"></goods-list>
     </scroll>
-    <back-top @click.native="backClick" v-show="isShowBackTop">
-    </back-top>
+    <back-top @click.native="backClick" v-show="isShowBackTop"> </back-top>
 </div>
 </template>
 
@@ -28,6 +27,10 @@ import Scroll from "components/common/scroll/Scroll.vue"
 import HomeSwiper from "./childComps/HomeSwiper.vue";
 import RecommendItem from "./childComps/RecommendView.vue";
 import FeatureView from "./childComps/FeatureView.vue";
+
+import {
+    itemListenerMixin
+} from "common/mixin.js"
 import {
     getHomeMultidata,
     getHomeGoods,
@@ -43,6 +46,8 @@ export default {
         Scroll,
         BackTop
     },
+    mixins: [itemListenerMixin],
+
     data() {
         return {
             banners: [],
@@ -62,20 +67,23 @@ export default {
                     list: []
                 }
             },
+            imageType: "img",
             currentType: 'pop',
             isShowBackTop: false,
             isTabShow: false,
             isLoad: false,
-            saveY: 0
+            saveY: 0,
         };
     },
     mounted() {
         // console.log(this.$ref.$el.)
-        const a = this.debounce(this.$refs.scroll.refresh, 100)
-        this.$bus.$on('itemImgOnload', () => {
-            a()
-        })
-        // this.swiperOnLoad()
+        // 监听图片是否加载完成，注册全局事件
+        // const newRefresh = this.debounce(this.$refs.scroll.refresh, 100)
+        // this.$bus.$on('itemImgOnload', this.itemImgListener)
+        // // this.swiperOnLoad()
+        // this.itemImgListener = () => {
+        //     newRefresh()
+        // }
 
     },
     created() {
@@ -98,7 +106,9 @@ export default {
         this.$refs.scroll.refresh()
     },
     deactivated() {
-        this.saveY = this.$refs.scroll.scroll.y
+        this.saveY = this.$refs.scroll.scroll.y;
+        // 2. 取消对全局事件的监听
+        this.$bus.$off('itemImgOnload', this.itemImgListener)
     },
     methods: {
         debounce(func, delay) {
@@ -110,7 +120,6 @@ export default {
                 }, delay)
             }
         },
-
         contentScroll(position) {
             // console.log(position)
             this.isShowBackTop = (-position.y) > 1000
@@ -127,6 +136,9 @@ export default {
         backClick() {
             this.$refs.scroll.scrollTo(0, 0)
         },
+
+        //对监听事件保存
+
         /**
            获取网络请求
          */
@@ -165,7 +177,6 @@ export default {
         getHomeGoods(type) {
             const page = this.goods[type].page + 1;
             getHomeGoods(type, page).then((res) => {
-                console.log(res)
                 this.goods[type].list.push(...res.data.list)
                 this.goods[type].page + 1
                 this.$refs.scroll.finishPullUp()
@@ -184,7 +195,6 @@ export default {
     right: 0;
     top: 0;
     z-index: 9;
-
 }
 
 .tab-item {
@@ -192,7 +202,6 @@ export default {
     top: 43px;
     background: white;
     z-index: 10;
-
 }
 
 .content {

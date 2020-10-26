@@ -29,6 +29,7 @@ export default {
     },
     mounted() {
         // 1.创建BScroll对象
+        console.log('scoll组件创建了')
         this.scroll = new BScroll(this.$refs.wrapper, {
             click: true,
             probeType: this.probeType,

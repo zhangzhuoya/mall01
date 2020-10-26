@@ -1,6 +1,6 @@
 <template>
 <div class="goods-item" @click='goodsClick'>
-    <img :src="goodsItem.show.img" alt="" @load="imgOnload" class="swiper-img">
+    <img :src="goodsItem[imageType]" alt="" @load="imgOnload" class="swiper-img">
     <div class="goods-info">
         <p>{{goodsItem.title}}</p>
         <span class="price">{{goodsItem.price}}</span>
@@ -18,6 +18,9 @@ export default {
             default () {
                 return {}
             }
+        },
+        imageType: {
+            type: String
         }
     },
     created() {

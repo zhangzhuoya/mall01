@@ -7,7 +7,6 @@
                 {{item}}
             </div>
         </div>
-
     </detail-item>
 </div>
 </template>
@@ -26,8 +25,8 @@ export default {
     },
     methods: {
         detailClick(index) {
-            console.log(index)
-            // this.$emit('detailClick', index)
+            // console.log(index)
+            this.$emit('detailClick', index)
             this.detailIndex = index
 
         },
