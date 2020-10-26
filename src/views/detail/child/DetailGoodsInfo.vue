@@ -10,7 +10,7 @@
         穿着效果
     </div>
     <div class="info-list">
-        <img :src="item" alt="" v-for="(item,index) in detailInfo.detailImage[0].list" :key="index" />
+        <img :src="item" alt="" v-for="(item,index) in detailInfo.detailImage[0].list" :key="index" @load="imageLoad" />
     </div>
 
 </div>
@@ -33,9 +33,9 @@ export default {
         // console.log(this.detailInfo)
     },
     methods: {
-        // detailImageLoad() {
-        //     this.$emit.detailImageLoad();
-        // }
+        imageLoad() {
+            this.$emit('detailImageLoad');
+        }
     }
 }
 </script>

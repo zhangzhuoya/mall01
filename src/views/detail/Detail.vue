@@ -5,8 +5,8 @@
         <detail-swiper :banners="detailBanner" :pull-up-load="true"></detail-swiper>
         <detail-base-info :goods="goods"></detail-base-info>
         <detail-shop :shop="shop"></detail-shop>
-        <detail-goods-info :detailInfo="detailInfo"></detail-goods-info>
-        <detail-param-info ref="params" :paramInfo="paramInfo" @detailImageLoad="detailImageLoad"></detail-param-info>
+        <detail-goods-info :detailInfo="detailInfo" @detailImageLoad="detailImageLoad"></detail-goods-info>
+        <detail-param-info ref="params" :paramInfo="paramInfo"></detail-param-info>
         <detail-comment-info ref="comment" :comment-info="commentInfo"></detail-comment-info>
         <detail-recommend-info ref="recommend" :recommendList="recommendList" :imageType="imageType"></detail-recommend-info>
     </scroll>
@@ -114,10 +114,10 @@ export default {
 
     },
     updated() {
-        this.detailClick()
-
+        // 1. 第一次获取，值不对：this.$ref.params.$el压根没有渲染
+        // 2. 第二次不对，图片没有加载完成
+        //不包含图片，回产生bug
         this.detailImageLoad()
-
     },
     methods: {
         // detailClick(index) {
@@ -132,17 +132,21 @@ export default {
                 // console.log(this.recommendList)
             })
         },
+
         detailImageLoad() {
-            this.themeTopYs = [];
-            this.themeTopYs.push(0);
-            this.themeTopYs.push(this.$refs.params.$el.offsetTop);
-            this.themeTopYs.push(this.$refs.comment.$el.offsetTop);
-            this.themeTopYs.push(this.$refs.recommend.$el.offsetTop);
+            this.$nextTick(() => {
+                this.themeTopYs = [];
+                this.themeTopYs.push(0);
+                this.themeTopYs.push(this.$refs.params.$el.offsetTop);
+                this.themeTopYs.push(this.$refs.comment.$el.offsetTop);
+                this.themeTopYs.push(this.$refs.recommend.$el.offsetTop);
+                console.log(this.themeTopYs)
+            })
+
         },
         // 点击跳转到相应位置
         detailClick(index) {
             this.$refs.scroll.scrollTo(0, -this.themeTopYs[index], 200)
-
         },
 
     },

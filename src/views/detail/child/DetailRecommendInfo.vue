@@ -1,18 +1,5 @@
 <template>
 <div class="recommend-info">
-    <div class="info-header">热门推荐</div>
-    <div class="info-header">热门推荐</div>
-    <div class="info-header">热门推荐</div>
-    <div class="info-header">热门推荐</div>
-    <div class="info-header">热门推荐</div>
-    <div class="info-header">热门推荐</div>
-    <div class="info-header">热门推荐</div>
-    <div class="info-header">热门推荐</div>
-    <div class="info-header">热门推荐</div>
-    <div class="info-header">热门推荐</div>
-    <div class="info-header">热门推荐</div>
-    <div class="info-header">热门推荐</div>
-
     <goods-list :goods="recommendList" :imageType="imageType"></goods-list>
 </div>
 </template>
