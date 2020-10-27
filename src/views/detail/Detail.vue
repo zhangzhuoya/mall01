@@ -10,6 +10,8 @@
         <detail-comment-info ref="comment" :comment-info="commentInfo"></detail-comment-info>
         <detail-recommend-info ref="recommend" :recommendList="recommendList" :imageType="imageType"></detail-recommend-info>
     </scroll>
+    <detail-bottom-bar></detail-bottom-bar>
+
 </div>
 </template>
 
@@ -17,6 +19,7 @@
 import DetailNav from "./child/DetailNav";
 import DetailSwiper from "./child/DetailSwiper";
 import DetailCommentInfo from "./child/DetailCommentInfo";
+import DetailBottomBar from './child/DetailBottomBar'
 
 import DetailBaseInfo from "./child/DetailBaseInfo";
 import DetailShop from "./child/DetailShop";
@@ -31,7 +34,6 @@ import {
     getRecommend,
     Goods,
     Shop,
-    // DetailGoodsInfo,
     GoodsParam,
 } from "network/detail";
 
@@ -56,7 +58,6 @@ export default {
             itemImgListener: null,
             themeTopYs: [1000, 2000, 3000, 4000],
             currentY: 0,
-
         };
     },
     components: {
@@ -69,6 +70,7 @@ export default {
         DetailCommentInfo,
         Scroll,
         DetailRecommendInfo,
+        DetailBottomBar
     },
     created() {
         this.iid = this.$route.params.iid;
@@ -139,6 +141,7 @@ export default {
                 this.themeTopYs.push(this.$refs.params.$el.offsetTop);
                 this.themeTopYs.push(this.$refs.comment.$el.offsetTop);
                 this.themeTopYs.push(this.$refs.recommend.$el.offsetTop);
+                this.themeTopYs.push(Number.MAX_VALUE);
                 // console.log(this.themeTopYs);
             });
         },
@@ -146,18 +149,26 @@ export default {
             // console.log(positionY.y)
             let lengthY = this.themeTopYs.length;
             // console.log(this.themeTopYs)
-            for (let i = 0; i < lengthY; i++) {
+            for (let i = 0; i < lengthY - 1; i++) {
                 // console.log(i)
-                if (this.currentY !== i &&
-                    ((i < lengthY - 1 && -positionY.y >= this.themeTopYs[i] && -positionY.y <= this.themeTopYs[i + 1]) ||
-                        (i === lengthY - 1 && -positionY.y >= this.themeTopYs[i]))) {
+                // if (this.currentY !== i &&
+                //     ((i < lengthY - 1 && -positionY.y >= this.themeTopYs[i] &&
+                //             -positionY.y <= this.themeTopYs[i + 1]) ||
+                //         (i === lengthY - 1 && -positionY.y >= this.themeTopYs[i]))) {
+                //     this.currentY = i;
+                //     this.$refs.nav.detailIndex = this.currentY
+                //     console.log(this.currentY)
+                //     console.log(this.$refs.nav.detailIndex)
+                // }
+                // 这样判断
+                if (
+                    this.currentY !== i &&
+                    -positionY.y >= this.themeTopYs[i] &&
+                    -positionY.y <= this.themeTopYs[i + 1]
+                ) {
                     this.currentY = i;
-
-                    this.$refs.nav.detailIndex = this.currentY
-                    console.log(this.currentY)
-                    console.log(this.$refs.nav.detailIndex)
+                    this.$refs.nav.detailIndex = this.currentY;
                 }
-
             }
             // console.log(positionY)
         },
