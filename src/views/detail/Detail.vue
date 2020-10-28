@@ -2,6 +2,7 @@
 <div>
     <detail-nav @detailClick="detailClick" ref="nav"></detail-nav>
     <scroll class="content" :probe-type="3" ref="scroll" @scroll="contentScroll">
+        {{this.$store.state.cartList}}
         <detail-swiper :banners="detailBanner" :pull-up-load="true"></detail-swiper>
         <detail-base-info :goods="goods"></detail-base-info>
         <detail-shop :shop="shop"></detail-shop>
@@ -10,8 +11,8 @@
         <detail-comment-info ref="comment" :comment-info="commentInfo"></detail-comment-info>
         <detail-recommend-info ref="recommend" :recommendList="recommendList" :imageType="imageType"></detail-recommend-info>
     </scroll>
-    <detail-bottom-bar></detail-bottom-bar>
-
+    <detail-bottom-bar @s="sss"></detail-bottom-bar>
+    <back-top v-show="isShowTop" @click.native="backTop"></back-top>
 </div>
 </template>
 
@@ -19,8 +20,8 @@
 import DetailNav from "./child/DetailNav";
 import DetailSwiper from "./child/DetailSwiper";
 import DetailCommentInfo from "./child/DetailCommentInfo";
-import DetailBottomBar from './child/DetailBottomBar'
-
+import DetailBottomBar from "./child/DetailBottomBar";
+import BackTop from "components/content/backTop/BackTop.vue";
 import DetailBaseInfo from "./child/DetailBaseInfo";
 import DetailShop from "./child/DetailShop";
 import DetailGoodsInfo from "./child/DetailGoodsInfo";
@@ -38,11 +39,13 @@ import {
 } from "network/detail";
 
 import {
-    itemListenerMixin
+    itemListenerMixin,
+    backTopMixin
 } from "common/mixin.js";
 export default {
     name: "Detail",
-    mixins: [itemListenerMixin],
+    mixins: [itemListenerMixin, backTopMixin],
+
     data() {
         return {
             iid: null,
@@ -70,7 +73,8 @@ export default {
         DetailCommentInfo,
         Scroll,
         DetailRecommendInfo,
-        DetailBottomBar
+        DetailBottomBar,
+        BackTop,
     },
     created() {
         this.iid = this.$route.params.iid;
@@ -170,9 +174,26 @@ export default {
                     this.$refs.nav.detailIndex = this.currentY;
                 }
             }
+            this.isShowTop = -positionY.y > 1000
+
             // console.log(positionY)
         },
+        sss() {
+            // console.log("ddd")
+            // 1. 获取商品信息
+            const product = {};
+            product.imageURL = this.detailBanner[0];
+            product.title = this.goods.title;
+            product.desc = this.goods.desc;
+            product.newPrice = this.goods.newPrice;
+            // product.count = 0;
 
+            product.iid = this.iid
+            // console.log(product)
+            // console.log('-----')
+            // 将商品添加到购物车
+            this.$store.dispatch('addCards', product)
+        },
         // 点击跳转到相应位置
         detailClick(index) {
             this.$refs.scroll.scrollTo(0, -this.themeTopYs[index], 200);

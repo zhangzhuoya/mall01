@@ -14,3 +14,17 @@ export const itemListenerMixin ={
   },
    
 }
+
+export const backTopMixin = {
+  data(){
+    return{
+      isShowTop:false
+    }
+  },
+  methods: {
+    backTop: function () {
+      this.$refs.scroll.scrollTo(0, 0, 300);
+    }
+  }
+
+}
