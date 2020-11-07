@@ -67,7 +67,7 @@ export default {
                     list: []
                 }
             },
-            imageType: "img",
+            imageType: "show.img",
             currentType: 'pop',
             isShowBackTop: false,
             isTabShow: false,
@@ -84,6 +84,7 @@ export default {
         // this.itemImgListener = () => {
         //     newRefresh()
         // }
+        // this.$refs.scroll.refresh();
 
     },
     created() {
@@ -179,7 +180,9 @@ export default {
             getHomeGoods(type, page).then((res) => {
                 this.goods[type].list.push(...res.data.list)
                 this.goods[type].page + 1
+
                 this.$refs.scroll.finishPullUp()
+                // console.log(res.data.list)
             });
         },
     },

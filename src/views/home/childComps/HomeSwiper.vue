@@ -29,7 +29,7 @@ export default {
     },
     methods: {
         swiperLoad() {
-            console.log('a')
+            // console.log('a')
             this.$emit('swiperOnLoad');
         }
     }

@@ -9,7 +9,7 @@ const Details = () => import("../views/detail/Detail")
 Vue.use(VueRouter);
 // 创建路由
 const routes = [
-  // { path: "", redirect: home },
+  { path: "/", redirect: '/home' },
 {
     path: '/home',
     component: Home

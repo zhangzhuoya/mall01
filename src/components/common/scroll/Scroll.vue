@@ -29,7 +29,7 @@ export default {
     },
     mounted() {
         // 1.创建BScroll对象
-        console.log('scoll组件创建了')
+        // console.log('scoll组件创建了')
         this.scroll = new BScroll(this.$refs.wrapper, {
             click: true,
             probeType: this.probeType,
@@ -44,7 +44,7 @@ export default {
 
         // 3.监听上拉事件
         this.scroll.on('pullingUp', () => {
-            // console.log('sss')
+            // console.log('上拉事件')
             this.$emit('pullingUp')
         })
         // console.log(this.scroll.wrapper)
@@ -57,7 +57,7 @@ export default {
             this.scroll && this.scroll.finishPullUp()
         },
         refresh() {
-            // console.log('sss')
+            console.log('调用刷新方法了')
             this.scroll && this.scroll.refresh()
         }
     }

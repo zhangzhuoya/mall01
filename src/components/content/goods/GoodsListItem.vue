@@ -1,6 +1,6 @@
 <template>
 <div class="goods-item" @click='goodsClick'>
-    <img :src="goodsItem[imageType]" alt="" @load="imgOnload" class="swiper-img">
+    <img :src='getImg' alt="" @load="imgOnload" class="swiper-img">
     <div class="goods-info">
         <p>{{goodsItem.title}}</p>
         <span class="price">{{goodsItem.price}}</span>
@@ -25,6 +25,14 @@ export default {
     },
     created() {
 
+    },
+    mounted() {
+        // console.log(this.imageType)
+    },
+    computed: {
+        getImg() {
+            return this.goodsItem.img || this.goodsItem.image || this.goodsItem.show.img
+        }
     },
     methods: {
         imgOnload() {

@@ -2,7 +2,6 @@
 <div>
     <detail-nav @detailClick="detailClick" ref="nav"></detail-nav>
     <scroll class="content" :probe-type="3" ref="scroll" @scroll="contentScroll">
-        {{this.$store.state.cartList}}
         <detail-swiper :banners="detailBanner" :pull-up-load="true"></detail-swiper>
         <detail-base-info :goods="goods"></detail-base-info>
         <detail-shop :shop="shop"></detail-shop>
@@ -113,15 +112,20 @@ export default {
 
     // },
     mounted() {
-        console.log(Scroll);
-        this.$refs.scroll.scrollTo(0, -1000, 200);
-        console.log(this.$refs.scroll.scrollTo(0, -1000, 200));
+        // console.log(Scroll);
+        this.$refs.scroll.scrollTo(0, 0, 200);
+        // console.log(this.$refs.scroll.scrollTo(0, -1000, 200));
+
     },
-    updated() {
-        // 1. 第一次获取，值不对：this.$ref.params.$el压根没有渲染
-        // 2. 第二次不对，图片没有加载完成
-        //不包含图片，回产生bug
-        this.detailImageLoad();
+    // updated() {
+    //     // 1. 第一次获取，值不对：this.$ref.params.$el压根没有渲染
+    //     // 2. 第二次不对，图片没有加载完成
+    //     //不包含图片，回产生bug
+    //     this.detailImageLoad();
+    // },
+    destroyed() {
+        this.$bus.$on('itemImgLoad', this.itemImgListener)
+
     },
     methods: {
         // detailClick(index) {
@@ -138,16 +142,18 @@ export default {
         },
 
         detailImageLoad() {
-            this.$nextTick(() => {
-                // this.$ref.scroll.refresh()
-                this.themeTopYs = [];
-                this.themeTopYs.push(0);
-                this.themeTopYs.push(this.$refs.params.$el.offsetTop);
-                this.themeTopYs.push(this.$refs.comment.$el.offsetTop);
-                this.themeTopYs.push(this.$refs.recommend.$el.offsetTop);
-                this.themeTopYs.push(Number.MAX_VALUE);
-                // console.log(this.themeTopYs);
-            });
+            this.newRefresh()
+            console.log('a')
+            // this.$ref.scroll.refresh()
+            // 在nextTick（（）=>{}）
+            this.themeTopYs = [];
+            this.themeTopYs.push(0);
+            this.themeTopYs.push(this.$refs.params.$el.offsetTop);
+            this.themeTopYs.push(this.$refs.comment.$el.offsetTop);
+            this.themeTopYs.push(this.$refs.recommend.$el.offsetTop);
+            this.themeTopYs.push(Number.MAX_VALUE);
+            console.log(this.themeTopYs);
+
         },
         contentScroll(positionY) {
             // console.log(positionY.y)
@@ -192,6 +198,7 @@ export default {
             // console.log(product)
             // console.log('-----')
             // 将商品添加到购物车
+            this.$toast.show()
             this.$store.dispatch('addCards', product)
         },
         // 点击跳转到相应位置

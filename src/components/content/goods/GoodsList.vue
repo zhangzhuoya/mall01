@@ -24,6 +24,9 @@ export default {
             type: String
         }
 
+    },
+    mounted() {
+        // console.log(this.imageType)
     }
 }
 </script>

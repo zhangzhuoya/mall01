@@ -17,8 +17,21 @@ export default {
             default () {
                 return []
             }
-        }
-    }
+        },
+        // imageType: {
+        //     type: String,
+
+        // }
+    },
+    mounted() {
+        // console.log(this.recommends);
+        // console.log(this.imagType)
+    },
+    // computed: {
+    //     getImg() {
+    //         return this.item.img || this.item.image || this.item.show.img
+    //     }
+    // }
 
 }
 </script>
